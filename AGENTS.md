@@ -35,9 +35,11 @@ exposing ADB on the network, writing the boot partition).
 ## What to tell the user to do physically (you cannot do these)
 - Connect the Pod to a display (HDMI-out 1), power (12 V center-positive barrel,
   or PoE+), and a USB cable to the computer you're running `adb` on.
-- For Step 0 only: open the case (a few screws on the base) and hold **Volume-Up
-  while applying power** to enter fastboot. After ADB is enabled, the case can be
-  closed for good — everything else is remote.
+- For Step 0 only: open the case (a few screws on the base, with a small Phillips
+  screwdriver) and hold **Volume-Down while applying power** to enter fastboot
+  (Volume-Up does not reach fastboot on this SoC). The Volume-Down button and a
+  small power button are on the board inside; there are no external buttons. After
+  ADB is enabled, the case can be closed for good — everything else is remote.
 - Tell them which specific on-screen prompts to expect and what to do with each:
   - TWRP's **"Keep Read Only" vs "Swipe to Allow Modifications" → DECLINE** (choose
     Keep Read Only). This is the one prompt they must not accept.

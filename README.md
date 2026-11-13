@@ -55,7 +55,8 @@ Proceed only if you understand and accept these terms. This is not legal advice.
 | Power | 12 VDC @ 2 A barrel (5.5 mm OD / 2.1 mm ID, **center-positive**) or PoE+ |
 | Draw | ~6–10 W average (the "2 A" is headroom, not continuous draw) |
 
-No battery — it powers on when power is applied and powers off when you unplug it.
+No battery — it powers on when power is applied and powers off when you unplug it
+(there's also a small power button on the board inside the case, but no external one).
 Any clean **12 V, center-positive, ≥2 A** barrel supply works; do **not** feed it
 the wrong voltage (no 9 V, no 19 V laptop bricks). *(Confirm 12 V and the polarity
 against your own unit's power-supply label before plugging anything in — wrong
@@ -100,6 +101,8 @@ Verify the binaries before use: `sha256sum -c SHA256SUMS`.
 ## Prerequisites
 
 - A PC with `adb` and `fastboot` (Android platform-tools).
+- A small **Phillips screwdriver** — you open the case once (Step 0) to reach the
+  Volume button; after ADB is on you never need it again.
 - The included `recovery/twrp-solstice-gen3-signed.img`, used **only** to RAM-boot
   (never flash) so you can enable ADB once (Step 1).
 - The third-party apps below (Projectivy, F-Droid, Aurora, TizenTube) are
@@ -114,11 +117,16 @@ optional network-ADB note in Step 2.
 
 ## Step 0 — Enter the bootloader (fastboot)
 
-- With the Pod **powered off** (unplugged), **hold Volume-Up** and apply power.
-  It auto-powers-on into fastboot. (There is no accessible power button.)
-- The Volume-Up button is inside the case. The case opens with **a few screws** on
-  the base — a one-time thing to reach the button; for all later use you drive the
-  Pod over USB/network (`adb reboot bootloader`), no case opening required.
+- With the Pod **powered off** (unplugged), **hold Volume-Down** and apply power.
+  It auto-powers-on straight into fastboot. (Volume-Down is the normal Qualcomm
+  fastboot combo on this SoC; Volume-Up does *not* reach fastboot here.)
+- The Volume-Down button is **inside the case**, next to a small **power button**
+  on the board (the Pod has no external buttons). Open the case with **a few
+  screws** on the base to reach them — a one-time thing. You can power-cycle with
+  that internal power button instead of unplugging, but entering fastboot still
+  needs Volume-Down held *as power is applied*.
+- For all later use you drive the Pod over USB/network (`adb reboot bootloader`),
+  so once ADB is on you can close the case for good.
 - Confirm: `fastboot devices` should list it.
 
 ## Step 1 — RAM-boot TWRP and enable ADB (once)
@@ -345,7 +353,7 @@ scrcpy and make sure that copy is first in `PATH`.
 | Black screen but Pod is **pingable / on the network** | Display/HDMI-out issue; Android is actually up | Try the other HDMI-out port; `scrcpy` to see the UI |
 | ADB disappears ~10 s after each boot | Solstice server re-enabled | Step 2 (`disable-user`) |
 | Apps load blank / **cert / TLS errors** | Clock wrong (1969) | Step 5 clock fix (auto_time + reboot with internet) |
-| Stock shows a **"No command"** screen | You're in stock recovery | Power-cycle (unplug/replug) while holding **Vol-Up** to re-enter fastboot |
+| Stock shows a **"No command"** screen | You're in stock recovery | Power-cycle (unplug/replug) while holding **Vol-Down** to re-enter fastboot |
 | Home screen gone / stuck on chooser | No/!default launcher | Reinstall a launcher and `set-home-activity` it |
 
 **Golden rule — back up `boot` before you touch it** (also in Step 1). From a
@@ -359,8 +367,9 @@ adb pull /tmp/boot-backup.img    # keep it safe; this un-bricks the first row ab
 
 ## Recovery / un-bricking
 
-- **Enter fastboot with no working Android:** hold **Volume-Up while power is
-  applied**. The button is inside the case — **a few screws** on the base open it.
+- **Enter fastboot with no working Android:** hold **Volume-Down while power is
+  applied**. The button is inside the case — **a few screws** on the base open it
+  (a small Phillips screwdriver); there's an internal power button next to it too.
   From a *working* Android you don't need the case: `adb reboot bootloader`.
 - **From fastboot:** `fastboot boot recovery/twrp-solstice-gen3-signed.img` to
   RAM-boot recovery (never `flash` unsigned), or
