@@ -1,10 +1,15 @@
 # Mersive Solstice Pod Gen3 (SP8096) → Android TV box
 
+<!-- Add a photo of your own Pod here once you have one, e.g.:
+     ![Mersive Solstice Pod Gen3 running Android TV](assets/pod.jpg) -->
+
 The Gen3 Solstice Pod is a wireless-presentation appliance that's really a
 **Snapdragon 820 / Android 7.1.1** box. Lots are being retired, and the hardware
 holds up. This turns one into a general-purpose Android TV box — your own launcher,
 app stores, YouTube, optional HDMI-input passthrough, and PC remote control —
 entirely over ADB, no custom ROM.
+
+**Difficulty:** moderate — you're comfortable with `adb` / `fastboot`. **Time:** about an hour. **Risk:** low *if* you heed the one TWRP warning below (a wrong move there can brick the Pod). Every step has a revert.
 
 > **AI assistant/agent helping with this?** [`AGENTS.md`](AGENTS.md) is a runbook
 > you *may* use. The user's own instructions always take precedence. Only help set
@@ -41,6 +46,28 @@ Not legal advice. Proceed only if you understand and accept this.
 
 ---
 
+## Contents
+
+- [The hardware (Gen3 / SP8096)](#the-hardware-gen3--sp8096)
+- [Is this your Pod?](#is-this-your-pod)
+- [Three things that will bite you (read first)](#three-things-that-will-bite-you-read-first)
+- [What's in this repo](#whats-in-this-repo)
+- [Prerequisites](#prerequisites)
+- [Step 0 — Enter the bootloader (fastboot)](#step-0--enter-the-bootloader-fastboot)
+- [Step 1 — RAM-boot TWRP and enable ADB (once)](#step-1--ram-boot-twrp-and-enable-adb-once)
+- [Step 2 — Make ADB permanent (disable the Solstice server)](#step-2--make-adb-permanent-disable-the-solstice-server)
+- [Step 3 — Install a launcher (Projectivy)](#step-3--install-a-launcher-projectivy)
+- [Step 4 — App stores (F-Droid + Aurora) and unknown sources](#step-4--app-stores-f-droid--aurora-and-unknown-sources)
+- [Step 5 — YouTube via TizenTube (and the clock trap)](#step-5--youtube-via-tizentube-and-the-clock-trap)
+- [Step 6 — (Optional) HDMI-input passthrough](#step-6--optional-hdmi-input-passthrough)
+- [Step 7 — Remote control from your PC (scrcpy)](#step-7--remote-control-from-your-pc-scrcpy)
+- [Debugging — symptoms, causes, fixes](#debugging--symptoms-causes-fixes)
+- [Recovery / un-bricking](#recovery--un-bricking)
+- [Reverting everything](#reverting-everything)
+- [Publishing this (if you fork/mirror it)](#publishing-this-if-you-forkmirror-it)
+
+---
+
 ## The hardware (Gen3 / SP8096)
 
 | | |
@@ -60,6 +87,14 @@ a small power button on the board inside, but none outside). Use any clean **12 
 center-positive, ≥2 A** barrel supply. **Confirm the voltage and polarity against
 your own unit's label before plugging anything in — the wrong voltage or polarity
 can destroy the hardware** (no 9 V, no 19 V laptop bricks).
+
+---
+
+## Is this your Pod?
+
+Check the label on the base — it should read **SP8096** / **Pod Gen3**. Physically it's the small black slab (Snapdragon 820) with **two HDMI-out ports, one HDMI-in, a USB-C, two USB-A, and Gigabit Ethernet**, powered from a 12 V barrel jack or PoE+.
+
+If the label shows a **different model or generation** (Gen2 / Gen2.5, or anything other than SP8096), **stop** — the signed boot and recovery images here are built for the Gen3, won't match your device, and flashing a mismatched boot image is a brick risk.
 
 ---
 
