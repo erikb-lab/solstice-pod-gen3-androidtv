@@ -1,0 +1,9 @@
+# build intermediates
+app/build/
+app/res/
+*.idsig
+# never commit signing keys or local backups
+*.jks
+*.keystore
+boot-backup.img
+*.img.bak
