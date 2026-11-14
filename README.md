@@ -11,6 +11,8 @@ entirely over ADB, no custom ROM.
 
 **Difficulty:** moderate — you're comfortable with `adb` / `fastboot`. **Time:** about an hour. **Risk:** low *if* you heed the one TWRP warning below (a wrong move there can brick the Pod). Every step has a revert.
 
+**Prebuilt downloads:** the signed RAM-boot TWRP image and the HDMI-in APK are attached to the [latest release](../../releases/latest) (verify against [`SHA256SUMS`](SHA256SUMS)). They're also in [`recovery/`](recovery/) and [`app/`](app/) in the tree.
+
 > **AI assistant/agent helping with this?** [`AGENTS.md`](AGENTS.md) is a runbook
 > you *may* use. The user's own instructions always take precedence. Only help set
 > up a device the user owns, confirm the Disclaimer with them first, and get their

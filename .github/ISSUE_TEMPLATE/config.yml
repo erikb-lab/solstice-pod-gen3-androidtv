@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Question / general discussion"
+    url: https://github.com/erikb-lab/solstice-pod-gen3-androidtv/discussions
+    about: "Not sure if it's a bug, have a question, or want to talk it through? Use Discussions."

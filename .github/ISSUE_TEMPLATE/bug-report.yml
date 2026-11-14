@@ -1,0 +1,26 @@
+name: "Bug / problem with the guide"
+description: "A step is wrong, a command fails, or something in the repo is broken."
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: "What's wrong"
+    validations:
+      required: true
+  - type: input
+    id: step
+    attributes:
+      label: "Which step or file"
+      placeholder: "e.g. README Step 2, or app/build.sh"
+  - type: textarea
+    id: output
+    attributes:
+      label: "Command + full output"
+      render: shell
+  - type: input
+    id: host
+    attributes:
+      label: "Your computer OS + adb/fastboot versions"
+      placeholder: "e.g. Fedora 41, adb 35.0.2"
