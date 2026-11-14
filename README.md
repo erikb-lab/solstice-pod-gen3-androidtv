@@ -38,11 +38,6 @@ in `recovery/`). You accept full responsibility for the outcome.
 - **The result is an end-of-life device:** Android 7.1.1, a 2022 kernel, no further
   security updates. Keep it behind your router, never port-forward it, and don't use
   it for banking or other sensitive accounts.
-- **This whole project was "vibe-coded."** The guide, the scripts, and the HDMI app
-  were produced by an AI assistant working from human direction and testing on one
-  unit — not hand-authored by a domain expert. It worked here, but **read every
-  command before you run it** and treat the whole thing with the skepticism that
-  implies.
 
 Not legal advice. Proceed only if you understand and accept this.
 
@@ -447,3 +442,8 @@ To fully return to factory, re-apply Mersive's official firmware update.
   carries third-party (GPL + proprietary) components with licensing obligations. The
   app-store APKs are linked from their official upstreams rather than bundled, so you
   always get current, authentic builds.
+
+
+---
+
+<sub>Built with AI assistance ("vibe-coded") and tested on a single unit — read each command before you run it.</sub>
