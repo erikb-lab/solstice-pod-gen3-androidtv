@@ -1,8 +1,5 @@
 # Mersive Solstice Pod Gen3 (SP8096) → Android TV box
 
-<!-- Add a photo of your own Pod here once you have one, e.g.:
-     ![Mersive Solstice Pod Gen3 running Android TV](assets/pod.jpg) -->
-
 The Gen3 Solstice Pod is a wireless-presentation appliance that's really a
 **Snapdragon 820 / Android 7.1.1** box. Lots are being retired, and the hardware
 holds up. This turns one into a general-purpose Android TV box, with your own launcher,
