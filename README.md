@@ -5,11 +5,11 @@
 
 The Gen3 Solstice Pod is a wireless-presentation appliance that's really a
 **Snapdragon 820 / Android 7.1.1** box. Lots are being retired, and the hardware
-holds up. This turns one into a general-purpose Android TV box — your own launcher,
-app stores, YouTube, optional HDMI-input passthrough, and PC remote control —
+holds up. This turns one into a general-purpose Android TV box, with your own launcher,
+app stores, YouTube, optional HDMI-input passthrough, and PC remote control,
 entirely over ADB, no custom ROM.
 
-**Difficulty:** moderate — you're comfortable with `adb` / `fastboot`. **Time:** about an hour. **Risk:** low *if* you heed the one TWRP warning below (a wrong move there can brick the Pod). Every step has a revert.
+**Difficulty:** moderate (you're comfortable with `adb` / `fastboot`). **Time:** about an hour. **Risk:** low *if* you heed the one TWRP warning below (a wrong move there can brick the Pod). Every step has a revert.
 
 **Prebuilt downloads:** the signed RAM-boot TWRP image and the HDMI-in APK are attached to the [latest release](../../releases/latest) (verify against [`SHA256SUMS`](SHA256SUMS)). They're also in [`recovery/`](recovery/) and [`app/`](app/) in the tree.
 
@@ -20,14 +20,14 @@ entirely over ADB, no custom ROM.
 
 ---
 
-## ⚠️ Disclaimer — please read
+## ⚠️ Disclaimer: please read
 
 Unofficial, community info for modifying **hardware you own**. Not endorsed by or
 affiliated with Mersive. Provided **"as is," with no warranty** (including the image
 in `recovery/`). You accept full responsibility for the outcome.
 
 - This **can render the device temporarily or permanently inoperable.** One mistake
-  here — a broken `/system` verity state — may be **unrecoverable** without Mersive's
+  here (a broken `/system` verity state) may be **unrecoverable** without Mersive's
   firmware, which isn't provided here.
 - It **voids any warranty** and removes the device's Solstice functionality.
 - The author(s) **accept no liability** for any damage, data loss, or other
@@ -36,8 +36,8 @@ in `recovery/`). You accept full responsibility for the outcome.
   organization, make sure it's yours to keep (not leased or asset-tracked); its
   `/data` may still hold the previous owner's Wi-Fi or config until wiped.
 - **The result is an end-of-life device:** Android 7.1.1, a 2022 kernel, no further
-  security updates. Keep it behind your router, never port-forward it, and don't use
-  it for banking or other sensitive accounts.
+  security updates. It'll be online for streaming, but don't expose it (no
+  port-forwarding) and don't use it for banking or other sensitive accounts.
 
 Not legal advice. Proceed only if you understand and accept this.
 
@@ -50,15 +50,15 @@ Not legal advice. Proceed only if you understand and accept this.
 - [Three things that will bite you (read first)](#three-things-that-will-bite-you-read-first)
 - [What's in this repo](#whats-in-this-repo)
 - [Prerequisites](#prerequisites)
-- [Step 0 — Enter the bootloader (fastboot)](#step-0--enter-the-bootloader-fastboot)
-- [Step 1 — RAM-boot TWRP and enable ADB (once)](#step-1--ram-boot-twrp-and-enable-adb-once)
-- [Step 2 — Make ADB permanent (disable the Solstice server)](#step-2--make-adb-permanent-disable-the-solstice-server)
-- [Step 3 — Install a launcher (Projectivy)](#step-3--install-a-launcher-projectivy)
-- [Step 4 — App stores (F-Droid + Aurora) and unknown sources](#step-4--app-stores-f-droid--aurora-and-unknown-sources)
-- [Step 5 — YouTube via TizenTube (and the clock trap)](#step-5--youtube-via-tizentube-and-the-clock-trap)
-- [Step 6 — (Optional) HDMI-input passthrough](#step-6--optional-hdmi-input-passthrough)
-- [Step 7 — Remote control from your PC (scrcpy)](#step-7--remote-control-from-your-pc-scrcpy)
-- [Debugging — symptoms, causes, fixes](#debugging--symptoms-causes-fixes)
+- [Step 0: Enter the bootloader (fastboot)](#step-0-enter-the-bootloader-fastboot)
+- [Step 1: RAM-boot TWRP and enable ADB (once)](#step-1-ram-boot-twrp-and-enable-adb-once)
+- [Step 2: Make ADB permanent (disable the Solstice server)](#step-2-make-adb-permanent-disable-the-solstice-server)
+- [Step 3: Install a launcher (Projectivy)](#step-3-install-a-launcher-projectivy)
+- [Step 4: App stores (F-Droid + Aurora) and unknown sources](#step-4-app-stores-f-droid--aurora-and-unknown-sources)
+- [Step 5: YouTube via TizenTube (and the clock trap)](#step-5-youtube-via-tizentube-and-the-clock-trap)
+- [Step 6: (Optional) HDMI-input passthrough](#step-6-optional-hdmi-input-passthrough)
+- [Step 7: Remote control from your PC (scrcpy)](#step-7-remote-control-from-your-pc-scrcpy)
+- [Debugging: symptoms, causes, fixes](#debugging-symptoms-causes-fixes)
 - [Recovery / un-bricking](#recovery--un-bricking)
 - [Reverting everything](#reverting-everything)
 - [Publishing this (if you fork/mirror it)](#publishing-this-if-you-forkmirror-it)
@@ -79,19 +79,19 @@ Not legal advice. Proceed only if you understand and accept this.
 | Power | 12 VDC @ 2 A barrel (5.5 mm OD / 2.1 mm ID, **center-positive**) or PoE+ |
 | Draw | ~6–10 W average (the "2 A" is headroom, not continuous draw) |
 
-No battery — it powers on when power is applied and off when you unplug it (there's
+No battery, so it powers on when power is applied and off when you unplug it (there's
 a small power button on the board inside, but none outside). Use any clean **12 V,
 center-positive, ≥2 A** barrel supply. **Confirm the voltage and polarity against
-your own unit's label before plugging anything in — the wrong voltage or polarity
+your own unit's label before plugging anything in. The wrong voltage or polarity
 can destroy the hardware** (no 9 V, no 19 V laptop bricks).
 
 ---
 
 ## Is this your Pod?
 
-Check the label on the base — it should read **SP8096** / **Pod Gen3**. Physically it's the small black slab (Snapdragon 820) with **two HDMI-out ports, one HDMI-in, a USB-C, two USB-A, and Gigabit Ethernet**, powered from a 12 V barrel jack or PoE+.
+Check the label on the base. It should read **SP8096** / **Pod Gen3**. Physically it's the small black slab (Snapdragon 820) with **two HDMI-out ports, one HDMI-in, a USB-C, two USB-A, and Gigabit Ethernet**, powered from a 12 V barrel jack or PoE+.
 
-If the label shows a **different model or generation** (Gen2 / Gen2.5, or anything other than SP8096), **stop** — the signed boot and recovery images here are built for the Gen3, won't match your device, and flashing a mismatched boot image is a brick risk.
+If the label shows a **different model or generation** (Gen2 / Gen2.5, or anything other than SP8096), **stop**. The signed boot and recovery images here are built for the Gen3, won't match your device, and flashing a mismatched boot image is a brick risk.
 
 ---
 
@@ -100,13 +100,13 @@ If the label shows a **different model or generation** (Gen2 / Gen2.5, or anythi
 1. **dm-verity is enforced on `/system`.** Mount `/system` **read-write** in recovery
    and verity breaks, leaving a **black screen that's not easily recoverable** without
    Mersive's firmware. The trap: when TWRP first starts it offers **"Keep Read Only"**
-   vs **"Swipe to Allow Modifications."** Always choose **Keep Read Only** — never
+   vs **"Swipe to Allow Modifications."** Always choose **Keep Read Only**, never
    swipe, and never use TWRP's Wipe / Format / Restore / Install.
 2. **The bootloader enforces image signatures.** Flashing an **unsigned** boot image
    = black screen, no USB, no display. Only ever `fastboot boot` (RAM-boot) unverified
    images; never `fastboot flash boot` something unsigned. (These units run `secure:no`
    and will `fastboot boot` an image signed with the key they trust **without
-   unlocking** — the included TWRP is one such image, verified on a real Gen3.)
+   unlocking**. The included TWRP is one such image, verified on a real Gen3.)
 3. **The Solstice app turns ADB off ~10 s after every boot.** Until you disable it
    (Step 2), your ADB window slams shut right after boot.
 
@@ -130,41 +130,41 @@ Verify the binaries before use: `sha256sum -c SHA256SUMS`.
 ## Prerequisites
 
 - A PC with `adb` and `fastboot` (Android platform-tools).
-- A small **Phillips screwdriver** — the case comes off once (Step 0) to reach the
+- A small **Phillips screwdriver**. The case comes off once (Step 0) to reach the
   Volume button; after ADB is on you never need it again.
 - The included `recovery/twrp-solstice-gen3-signed.img`, **only** ever RAM-booted
   (never flashed) to enable ADB once (Step 1).
 - The third-party apps (Projectivy, F-Droid, Aurora, TizenTube) from their
-  **official** pages — pin a known version and check the publisher. Aurora Store and
+  **official** pages. Pin a known version and check the publisher. Aurora Store and
   TizenTube operate outside Google's / YouTube's terms of service; use them knowingly.
 
 Commands below use ADB over USB. For network ADB instead, see Step 2.
 
 ---
 
-## Step 0 — Enter the bootloader (fastboot)
+## Step 0: Enter the bootloader (fastboot)
 
-- With the Pod **unplugged**, **hold Volume-Down** and apply power — it boots straight
+- With the Pod **unplugged**, **hold Volume-Down** and apply power, and it boots straight
   into fastboot. (Volume-Down is the normal Qualcomm fastboot combo on this SoC;
   Volume-Up does *not* reach fastboot here.)
 - Volume-Down and a small **power button** are both **inside the case** (the Pod has
-  no external buttons). Open the base — **a few screws** — to reach them, a one-time
+  no external buttons). Open the base (**a few screws**) to reach them, a one-time
   thing. The internal power button can power-cycle instead of unplugging, but entering
   fastboot still needs Volume-Down held *as power is applied*.
 - For all later use you drive the Pod over USB/network (`adb reboot bootloader`), so
   once ADB is on you can close the case for good.
 - Confirm: `fastboot devices` lists it.
 
-## Step 1 — RAM-boot TWRP and enable ADB (once)
+## Step 1: RAM-boot TWRP and enable ADB (once)
 
 ```bash
 fastboot boot recovery/twrp-solstice-gen3-signed.img
 ```
-This **RAM-boots** TWRP — it flashes nothing. TWRP brings its own working `adb`, so
+This **RAM-boots** TWRP; it flashes nothing. TWRP brings its own working `adb`, so
 from your PC you now have a root shell on the Pod.
 
 > **On the TWRP screen:** if asked **Keep Read Only vs Swipe to Allow Modifications →
-> Keep Read Only.** Otherwise leave the screen alone — don't swipe to modify, don't
+> Keep Read Only.** Otherwise leave the screen alone: don't swipe to modify, don't
 > accept any "Install TWRP app" prompt, don't Wipe / Format / Restore. Everything
 > below runs from your PC over `adb`.
 
@@ -176,7 +176,7 @@ adb shell 'mount | grep -q " /data " && head -c 40 /data/system/users/0/settings
 # expect: the start of an XML file, then OK
 ```
 
-**Back up the boot partition** — your get-out-of-jail card:
+**Back up the boot partition**, your get-out-of-jail card:
 ```bash
 adb shell "dd if=/dev/block/bootdevice/by-name/boot of=/tmp/boot-backup.img bs=1M"
 adb pull /tmp/boot-backup.img ./boot-backup.img    # /tmp is lost on reboot; the pull is what matters
@@ -210,18 +210,18 @@ Use **your own** `~/.android/adbkey.pub`, never anyone else's. (Missing? Run
 `adb keygen ~/.android/adbkey`, or just run `adb devices` once.)
 
 - **Stock comes up with no ADB?** Usual causes: (a) step 1's verify didn't print
-  `value="1"` — the setting is missing or oddly formatted; (b) the usb config isn't
+  `value="1"`, the setting is missing or oddly formatted; (b) the usb config isn't
   exactly `diag,adb`; (c) the key file's owner/mode/**SELinux label** is wrong (want
   `system:shell`, `640`, label `adb_keys_file`). Re-boot TWRP and redo the failing
-  one — nothing here is a brick.
+  one. Nothing here is a brick.
 - **Revert:** set `adb_enabled` back to `0` and delete `/data/misc/adb/adb_keys`.
 
-Reboot to stock (`adb reboot` from TWRP). Within ~10 s the Pod shows in `adb devices`
-— move fast, the Solstice app is about to disable ADB (Step 2).
+Reboot to stock (`adb reboot` from TWRP). Within ~10 s the Pod shows in `adb devices`.
+Move fast, the Solstice app is about to disable ADB (Step 2).
 
 ---
 
-## Step 2 — Make ADB permanent (disable the Solstice server)
+## Step 2: Make ADB permanent (disable the Solstice server)
 
 ```bash
 adb shell pm disable-user --user 0 com.mersive.solstice.server
@@ -230,7 +230,7 @@ adb shell pm uninstall --user 0 com.mersive.solstice.server   # frees ~300 MB of
 `uninstall --user 0` removes it for the user but leaves the APK on `/system`, so
 dm-verity stays intact. **Don't** try to delete it from `/system`.
 
-- **ADB still drops ~10 s after boot?** Solstice is still enabled — re-run the
+- **ADB still drops ~10 s after boot?** Solstice is still enabled; re-run the
   `disable-user` line during the boot-time ADB window, or from TWRP set `enabled="3"`
   on its entry in `/data/system/users/0/package-restrictions.xml` (no entry yet?
   disable it from stock with the command above instead).
@@ -245,7 +245,7 @@ adb shell dumpsys window | grep mCurrentFocus
 ```
 
 **(Optional) ADB over the network.** Convenient, but **port 5555 gives full control
-of the device with no network-layer auth, and is actively scanned** — trusted LAN
+of the device with no network-layer auth, and is actively scanned**. Trusted LAN
 only.
 ```bash
 adb tcpip 5555                       # this session only; reverts on reboot (prefer this)
@@ -253,16 +253,16 @@ adb connect <POD_IP>:5555
 ```
 Making it survive reboots (`printf 5555 > /data/property/persist.adb.tcp.port` from a
 root shell, same owner/label as the other property files) leaves it permanently
-exposed and has **no clean one-command revert** — delete that file from a root shell
+exposed and has **no clean one-command revert**. Delete that file from a root shell
 to undo it. Prefer the non-persistent form above.
 
 ---
 
-## Step 3 — Install a launcher (Projectivy)
+## Step 3: Install a launcher (Projectivy)
 
 Best free Android-TV launcher. The latest needs Android 10+, but **v4.63 supports
 Android 6.0+**, which fits. Official APKs: the developer's GitHub releases
-(`spocky/miproja1`) — get `ProjectivyLauncher-4.63-*.apk` and verify the publisher.
+(`spocky/miproja1`). Get `ProjectivyLauncher-4.63-*.apk` and verify the publisher.
 
 ```bash
 adb install -r ProjectivyLauncher-4.63-c76-xda-release.apk
@@ -280,7 +280,7 @@ adb shell 'am start -a android.intent.action.MAIN -c android.intent.category.HOM
 
 ---
 
-## Step 4 — App stores (F-Droid + Aurora) and unknown sources
+## Step 4: App stores (F-Droid + Aurora) and unknown sources
 
 ```bash
 adb shell settings put secure install_non_market_apps 1
@@ -295,7 +295,7 @@ Leaving it on is a mild risk; turn it back off if you only install via ADB.
 
 ---
 
-## Step 5 — YouTube via TizenTube (and the clock trap)
+## Step 5: YouTube via TizenTube (and the clock trap)
 
 Get `cobalt-arm.apk` (32-bit, ~80 MB, minSdk 24) from the `reisxd/TizenTubeCobalt`
 GitHub releases (verify the publisher/version).
@@ -317,13 +317,13 @@ adb wait-for-device && adb shell date   # should be correct now
 
 ---
 
-## Step 6 — (Optional) HDMI-input passthrough
+## Step 6: (Optional) HDMI-input passthrough
 
 The HDMI **input(s)** appear to Android as **camera devices**, so a small Camera2 app
 shows the input full-screen.
 
-**Easiest — the prebuilt APK** ([`app/hdmiin.apk`](app/), ~21 KB). It's signed with a
-**throwaway key made for this project** (`CN=Pod TV HDMI In`) — not a shared or
+**Easiest: the prebuilt APK** ([`app/hdmiin.apk`](app/), ~21 KB). It's signed with a
+**throwaway key made for this project** (`CN=Pod TV HDMI In`), not a shared or
 personal key, and it contains no private key. Verify against `SHA256SUMS` if you like.
 ```bash
 adb install -r app/hdmiin.apk
@@ -331,7 +331,7 @@ adb shell pm grant com.podtv.hdmiin android.permission.CAMERA
 adb shell am start -n com.podtv.hdmiin/.MainActivity
 ```
 
-**Or build it yourself** from the source in [`app/`](app/) — Gradle-free:
+**Or build it yourself** from the source in [`app/`](app/), Gradle-free:
 ```bash
 export ANDROID_HOME=~/Android/Sdk    # your SDK path
 cd app && ./build.sh                 # produces app/hdmiin.apk
@@ -344,7 +344,7 @@ uninstall one before installing the other. To change the app id, edit `package` 
 `AndroidManifest.xml` and the `src/com/podtv/hdmiin` path to match.
 
 Usage: OK / D-pad switches inputs; it auto-closes to the launcher after ~6 s with no
-signal. **Video works; audio does not** — the HDMI audio lands on an I2S path that
+signal. **Video works; audio does not.** The HDMI audio lands on an I2S path that
 returned only silence in testing, so it's disabled in the source (`AUDIO_ENABLED =
 false` in `MainActivity.java`; flip it and re-add the `RECORD_AUDIO` permission to
 experiment).
@@ -352,7 +352,7 @@ experiment).
 
 ---
 
-## Step 7 — Remote control from your PC (scrcpy)
+## Step 7: Remote control from your PC (scrcpy)
 
 [scrcpy](https://github.com/Genymobile/scrcpy) mirrors and controls the Pod over ADB
 (it has no touchscreen):
@@ -361,24 +361,24 @@ scrcpy                      # USB
 scrcpy -s <POD_IP>:5555     # network
 ```
 Fails with `libavformat.so.NN: cannot open shared object file`? Your scrcpy was built
-against a different ffmpeg than you have — install your distro's packaged scrcpy and
+against a different ffmpeg than you have. Install your distro's packaged scrcpy and
 make sure that copy is first in `PATH`.
 
 ---
 
-## Debugging — symptoms, causes, fixes
+## Debugging: symptoms, causes, fixes
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Black screen, **no USB**, no display, for minutes | Unsigned/bad **boot** image flashed | Enter fastboot and `fastboot flash boot <your known-good boot backup>` |
-| Black screen that a boot restore does **not** fix | `/system` verity broke (TWRP mounted it rw) | **Often unrecoverable without Mersive firmware** — re-apply Mersive's official firmware update if you can obtain it. This is why you never swipe "Allow Modifications". |
+| Black screen that a boot restore does **not** fix | `/system` verity broke (TWRP mounted it rw) | **Often unrecoverable without Mersive firmware.** Re-apply Mersive's official firmware update if you can obtain it. This is why you never swipe "Allow Modifications". |
 | Black screen but Pod is **pingable / on the network** | Display/HDMI-out issue; Android is actually up | Try the other HDMI-out port; `scrcpy` to see the UI |
 | ADB disappears ~10 s after each boot | Solstice server re-enabled | Step 2 (`disable-user`) |
 | Apps load blank / **cert / TLS errors** | Clock wrong (1969) | Step 5 clock fix (auto_time + reboot with internet) |
 | Stock shows a **"No command"** screen | You're in stock recovery | Power-cycle (unplug/replug) while holding **Vol-Down** to re-enter fastboot |
 | Home screen gone / stuck on chooser | No default launcher set | Reinstall a launcher and `set-home-activity` it |
 
-**Golden rule — back up `boot` before you touch it** (also in Step 1). From a
+**Golden rule: back up `boot` before you touch it** (also in Step 1). From a
 TWRP/root shell:
 ```bash
 adb shell "dd if=/dev/block/bootdevice/by-name/boot of=/tmp/boot-backup.img bs=1M"
@@ -390,7 +390,7 @@ adb pull /tmp/boot-backup.img    # keep it safe; this un-bricks the first row ab
 ## Recovery / un-bricking
 
 - **No working Android, need fastboot:** hold **Volume-Down while applying power**.
-  The button is inside the case — **a few screws** (Phillips) on the base — with an
+  The button is inside the case (**a few screws**, Phillips, on the base), with an
   internal power button beside it. From a *working* Android, skip the case:
   `adb reboot bootloader`.
 - **From fastboot:** `fastboot boot recovery/twrp-solstice-gen3-signed.img` to
@@ -398,7 +398,7 @@ adb pull /tmp/boot-backup.img    # keep it safe; this un-bricks the first row ab
   <your-boot-backup>.img` to restore a known-good boot.
 - A broken `/system` (verity) is the one failure a boot backup can't fix (see the
   Debugging table). Avoid it by never allowing modifications in TWRP.
-- For normal use you never need the buttons — USB + network ADB + `adb reboot
+- For normal use you never need the buttons. USB + network ADB + `adb reboot
   bootloader` cover everything while Android boots.
 
 ---
@@ -438,7 +438,7 @@ To fully return to factory, re-apply Mersive's official firmware update.
   (`tar --owner=0 --group=0 --numeric-owner …`, `zip -X …`).
 - Re-generate `SHA256SUMS` if you change any binary
   (`sha256sum app/hdmiin.apk recovery/*.img > SHA256SUMS`).
-- Read [`NOTICE.md`](NOTICE.md) **before redistributing the recovery image** — it
+- Read [`NOTICE.md`](NOTICE.md) **before redistributing the recovery image**. It
   carries third-party (GPL + proprietary) components with licensing obligations. The
   app-store APKs are linked from their official upstreams rather than bundled, so you
   always get current, authentic builds.
@@ -446,4 +446,4 @@ To fully return to factory, re-apply Mersive's official firmware update.
 
 ---
 
-<sub>Built with AI assistance ("vibe-coded") and tested on a single unit — read each command before you run it.</sub>
+<sub>Built with AI assistance ("vibe-coded") and tested on a single unit. Read each command before you run it.</sub>
