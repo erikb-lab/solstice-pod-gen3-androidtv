@@ -3,7 +3,7 @@
 The Gen3 Solstice Pod is a wireless-presentation appliance that's really a
 **Snapdragon 820 / Android 7.1.1** box. Lots are being retired, and the hardware
 holds up. This turns one into a general-purpose Android TV box, with your own launcher,
-app stores, YouTube, optional HDMI-input passthrough, and PC remote control,
+app stores, YouTube (4K playback with no stutter or lag), optional HDMI-input passthrough, and PC remote control,
 entirely over ADB, no custom ROM.
 
 **Difficulty:** moderate (you're comfortable with `adb` / `fastboot`). **Time:** about an hour. **Risk:** low *if* you heed the one TWRP warning below (a wrong move there can brick the Pod). Every step has a revert.
