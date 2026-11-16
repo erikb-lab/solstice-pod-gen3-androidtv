@@ -14,37 +14,31 @@ entirely over ADB, no custom ROM.
 
 ## See it running
 
-A converted Pod in actual use. These are a phone pointed at the TV, sped up 2x to keep the files small, so the text is a touch soft and the motion looks fast. The numbers in the last clip are the honest part.
+A retired Gen3 Pod running as an Android TV box: the actual hardware, then two short clips of it in use.
 
-**It boots into your own launcher, not Solstice**
+### The hardware
+
+![The Pod's rear ports: gigabit ethernet, 12V power, two USB 3.0, HDMI 2 and HDMI 1 (4K)](docs/media/pod-ports.jpg)
+
+Rear ports, left to right: gigabit ethernet (also PoE+), 12V barrel power, two USB 3.0, **HDMI 2**, and **HDMI 1 (the 4K output)**. The whole unit:
+
+![The Solstice Pod Gen3 unit](docs/media/pod.jpg)
+
+### Boots into your own launcher (clip sped up 2x)
 
 ![Pod booting into the Projectivy launcher](docs/media/01-boot-launcher.gif)
 
-The Mersive and Solstice splashes still flash past, then it lands on Projectivy instead of the presentation UI.
+Mersive and Solstice splashes flash past, then it lands on Projectivy instead of the presentation UI.
 
-**A real app and a working YouTube client**
+### Real 4K playback, measured (clip at normal speed)
 
-![Browsing the TizenTube YouTube client](docs/media/02-youtube-browse.gif)
+![A NASA 4K video playing on the Pod](docs/media/05-4k-playback.gif)
 
-TizenTube open on the recommended feed, with F-Droid and Aurora installed behind it.
+A NASA 4K clip (public domain) playing through TizenTube. Its own stats overlay confirms what the Pod is actually doing:
 
-**Search, driven entirely by the remote (over ADB here)**
+![Stats overlay: 3840x2160 at 30fps, 0 dropped of 1018 frames, VP9](docs/media/05b-4k-stats.jpg)
 
-![Searching YouTube for a test video](docs/media/03-search-4k.gif)
-
-Typing a query and picking a result. No touchscreen, no phone casting, just the box doing its own thing.
-
-**High-resolution playback**
-
-![Selecting 1440p60 playback quality](docs/media/04-playback-quality.gif)
-
-Playing the Blender "Big Buck Bunny" short and setting quality to 1440p60.
-
-**The proof: 1440p60, zero dropped frames**
-
-![Stats overlay showing 2560x1440p60 with 0 dropped frames](docs/media/05-stats-proof.gif)
-
-TizenTube's own stats overlay during playback: decoding **2560x1440p60 with 0 dropped frames** on a 2016-era Snapdragon 820. That is what "no stutter" means here, measured rather than asserted. (This capture ran at 1440p60; the Adreno 530 / Venus decoder also handles 2160p, and a clean 4K capture will replace this clip when I grab one.)
+Decoding genuine **3840x2160 (4K) VP9 at 30fps with 0 dropped frames** on a 2016-era Snapdragon 820, downscaled to a 1080p test monitor. That is what "no stutter or lag" means here: measured, not asserted.
 
 
 > **AI assistant/agent helping with this?** [`AGENTS.md`](AGENTS.md) is a runbook
