@@ -14,7 +14,7 @@ entirely over ADB, no custom ROM.
 
 ## See it running
 
-A retired Gen3 Pod running as an Android TV box: the actual hardware, then two short clips of it in use.
+A retired Gen3 Pod running as an Android TV box: the actual hardware, then two short clips of it in use. Click either clip to play the original full-quality video.
 
 ### The hardware
 
@@ -26,13 +26,13 @@ Rear ports, left to right: gigabit ethernet (also PoE+), 12V barrel power, two U
 
 ### Boots into your own launcher (clip sped up 2x)
 
-![Pod booting into the Projectivy launcher](docs/media/01-boot-launcher.gif)
+[![Pod booting into the Projectivy launcher](docs/media/01-boot-launcher.gif)](docs/media/01-boot-launcher.mp4)
 
 Mersive and Solstice splashes flash past, then it lands on Projectivy instead of the presentation UI.
 
 ### Real 4K playback, measured (clip at normal speed)
 
-![A NASA 4K video playing on the Pod](docs/media/05-4k-playback.gif)
+[![A NASA 4K video playing on the Pod](docs/media/05-4k-playback.gif)](docs/media/05-4k-playback.mp4)
 
 A NASA 4K clip (public domain) playing through TizenTube. Its own stats overlay confirms what the Pod is actually doing:
 
