@@ -90,6 +90,7 @@ Not legal advice. Proceed only if you understand and accept this.
 - [Debugging: symptoms, causes, fixes](#debugging-symptoms-causes-fixes)
 - [Recovery / un-bricking](#recovery--un-bricking)
 - [Reverting everything](#reverting-everything)
+- [Experimental: unlock the bootloader + persistent TWRP](#experimental-unlock-the-bootloader--persistent-twrp)
 - [Publishing this (if you fork/mirror it)](#publishing-this-if-you-forkmirror-it)
 
 ---
@@ -449,6 +450,22 @@ adb shell settings put secure install_non_market_apps 0
 adb reboot
 ```
 To fully return to factory, re-apply Mersive's official firmware update.
+
+---
+
+## Experimental: unlock the bootloader + persistent TWRP
+
+The steps above never unlock the bootloader and never flash a partition, on
+purpose, so they stay low-risk and every step reverts. If you want more, there is a
+separate, **experimental** path that unlocks the bootloader and flashes TWRP to the
+recovery partition so it survives reboots (no more case-open button combo for a root
+shell), and opens the door to a persistent custom boot/ROM.
+
+It is **destructive** (unlocking wipes `/data`, so you rebuild the setup) and
+**higher risk**, and it was tested on a single unit. It does **not** bring a newer
+Android. If that trade is worth it to you, read the whole thing first:
+
+**→ [`docs/experimental-unlock.md`](docs/experimental-unlock.md)**
 
 ---
 

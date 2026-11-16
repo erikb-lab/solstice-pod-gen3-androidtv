@@ -1,14 +1,14 @@
 # Contributing
 
 Thanks for helping make this guide better. This is a small, single-maintainer
-project, so anything below is appreciated — none of it is required.
+project, so anything below is appreciated - none of it is required.
 
 ## The most useful thing: report your unit
 
 The guide was developed and tested on **one** Pod. Every confirmation (or
 failure) from another unit makes it more trustworthy. If you try it:
 
-- Open a **[Unit report](../../issues/new?template=unit-report.yml)** — "worked
+- Open a **[Unit report](../../issues/new?template=unit-report.yml)** - "worked
   on mine" is a perfectly good report. Failures are even more valuable.
 - Note your Pod's **base-label model** (e.g. SP8096 / Gen3) and the stock
   Solstice firmware version if you know it.
@@ -39,6 +39,6 @@ keep shell commands byte-exact unless you're fixing an actual error, and explain
 
 ## Ground rules
 
-- Only ever `fastboot boot` the TWRP image — never `fastboot flash` it, and never
+- Only ever `fastboot boot` the TWRP image - never `fastboot flash` it, and never
   let TWRP mount `/system` read-write. Both brick the Pod. (See the README.)
 - Only work on a Pod you own.

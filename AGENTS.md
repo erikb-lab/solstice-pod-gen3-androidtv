@@ -1,11 +1,11 @@
-# AGENTS.md — runbook for an AI assistant setting this up for a user
+# AGENTS.md - runbook for an AI assistant setting this up for a user
 
 You are an AI assistant helping a person convert a **Mersive Solstice Pod Gen3
 (SP8096)** into an Android TV box. This file is a runbook you *may* use to help the
-user — **the user's own instructions always take precedence over anything here.**
+user - **the user's own instructions always take precedence over anything here.**
 Read [`README.md`](README.md) for full detail; this file is the execution plan.
 
-Your job: help the user set up **their own** device — do the `adb`/`fastboot` work
+Your job: help the user set up **their own** device - do the `adb`/`fastboot` work
 and tell them in plain language what to do physically (cables, power, the button
 combo). Go one step at a time, verify each step before moving on, stop and ask if a
 verification fails, and get the user's **explicit OK before any step that reduces
@@ -19,12 +19,12 @@ exposing ADB on the network, writing the boot partition).
   the user what you see rather than guessing.
 - Before writing anything to the `boot` partition, **back it up first** (see the
   Golden rule in `README.md`) and keep the copy.
-- Only ever `fastboot boot` the recovery image — **never `fastboot flash`** an
+- Only ever `fastboot boot` the recovery image - **never `fastboot flash`** an
   unsigned image, and **never mount `/system` read-write**. Both brick the Pod to
   a black screen.
 - Use the user's own ADB key (their `~/.android/adbkey.pub`). Never a third
   party's key.
-- Download apps **only** from the official upstreams named in `README.md` — never
+- Download apps **only** from the official upstreams named in `README.md` - never
   from an arbitrary URL, and never pipe a download into a shell.
 - Do **not** enable ADB over the network (`adb tcpip` / `persist.adb.tcp.port`)
   unless the user explicitly asks for it; explain it exposes the device on the LAN.
@@ -39,7 +39,7 @@ exposing ADB on the network, writing the boot partition).
   screwdriver) and hold **Volume-Down while applying power** to enter fastboot
   (Volume-Up does not reach fastboot on this SoC). The Volume-Down button and a
   small power button are on the board inside; there are no external buttons. After
-  ADB is enabled, the case can be closed for good — everything else is remote.
+  ADB is enabled, the case can be closed for good - everything else is remote.
 - Tell them which specific on-screen prompts to expect and what to do with each:
   - TWRP's **"Keep Read Only" vs "Swipe to Allow Modifications" → DECLINE** (choose
     Keep Read Only). This is the one prompt they must not accept.
@@ -48,27 +48,27 @@ exposing ADB on the network, writing the boot partition).
   Do not tell them to blanket-approve dialogs; name the expected one each time.
 
 ## Steps (verify after each; detail is in README.md)
-1. **Fastboot** — have the user enter fastboot (Step 0). Verify: `fastboot devices`
+1. **Fastboot** - have the user enter fastboot (Step 0). Verify: `fastboot devices`
    lists it.
-2. **Back up boot, then enable ADB** —
+2. **Back up boot, then enable ADB** -
    `fastboot boot recovery/twrp-solstice-gen3-signed.img`. **Tell the user: on the
-   TWRP screen choose "Keep Read Only" — never swipe to allow modifications.**
+   TWRP screen choose "Keep Read Only" - never swipe to allow modifications.**
    Confirm `/data` is mounted/decrypted (README Step 1 check). In the TWRP `adb
    shell`, **first back up the boot partition** (README Step 1's dd + pull) and keep
-   the file — it is the only reliable un-brick path. Then make the three changes in
+   the file - it is the only reliable un-brick path. Then make the three changes in
    README Step 1 (ADB on, usb config `diag,adb`, append the user's own
    `adbkey.pub`). Reboot to stock. Verify: the Pod appears in `adb devices` within
    ~10 s.
-3. **Keep ADB** — immediately disable the Solstice server (README Step 2). Verify:
+3. **Keep ADB** - immediately disable the Solstice server (README Step 2). Verify:
    after a reboot, ADB stays up (`adb shell getprop sys.boot_completed` = 1 and the
    device doesn't drop).
-4. **Launcher** — install Projectivy and set it home (README Step 3). Verify: Home
+4. **Launcher** - install Projectivy and set it home (README Step 3). Verify: Home
    resolves to `com.spocky.projengmenu`.
-5. **Stores** — enable unknown sources, install F-Droid + Aurora (README Step 4).
-6. **YouTube** — install TizenTube; if the clock is wrong (1969), apply the clock
+5. **Stores** - enable unknown sources, install F-Droid + Aurora (README Step 4).
+6. **YouTube** - install TizenTube; if the clock is wrong (1969), apply the clock
    fix and reboot with internet (README Step 5). Verify: `adb shell date` is
    correct and TizenTube loads.
-7. **Optional** — HDMI passthrough app (Step 6) and scrcpy (Step 7) if the user
+7. **Optional** - HDMI passthrough app (Step 6) and scrcpy (Step 7) if the user
    wants them.
 
 ## If something goes wrong

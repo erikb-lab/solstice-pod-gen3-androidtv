@@ -5,7 +5,7 @@ labels: ["unit-report"]
 body:
   - type: markdown
     attributes:
-      value: "Thanks for reporting — even a plain \"worked on mine\" is genuinely useful to the next person."
+      value: "Thanks for reporting - even a plain \"worked on mine\" is genuinely useful to the next person."
   - type: input
     id: model
     attributes:
