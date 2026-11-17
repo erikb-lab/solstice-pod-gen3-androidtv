@@ -1,7 +1,2 @@
 3ee1a5ee2251a439dc53ab938be19a17287fbf7ce0003261b7dd7618f8f68de9  app/hdmiin.apk
 814cbcc514d97a106429f15dad138227231ba448bf8a28bdd7852ad1c715da9f  recovery/twrp-solstice-gen3-signed.img
-bca30fb4a064aa825d18c9fa07f966eb399d0fbb403cc23cadfe59124d4845d0  release:pod-kernel-28/boot_pod28_signed.img
-ceddfaf817cca1dd8105118250cefb04935b48ca2c8b6733fb0dd683f29c411a  release:pod-kernel-28/boot_pod28_unsigned.img
-1798a08dd1494d0df6d788e066ba477e763a4aeb32c9b55b7dd9aed89fd48a99  release:pod-kernel-28/dtbs-pod-and-lineage.tar.xz
-59e517e3eadcad7328d808978bd05e4095650f9cdd0d8ab4ee119492a5d82cfe  release:pod-kernel-28/dtbs-stock-mersive-125.tar.xz
-2dde1ad3ec5faf689d67979520f64528279d7d8d2322c6a8049aa04e29cd61dc  release:pod-kernel-28/unpacked-pod28.tar.xz
