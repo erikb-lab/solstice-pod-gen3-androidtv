@@ -474,22 +474,25 @@ Android. If that trade is worth it to you, read the whole thing first:
 
 ## LineageOS 18.1 + custom kernel
 
-Everything above keeps the stock Android 7.1.1. This is a separate path
-that replaces it with **LineageOS 18.1 (Android 11)** running on a patched 3.18 kernel, so
-you get a current Android with Google TV apps instead of the retired vendor system. It
-needs the unlocked bootloader from the section above.
-
-**What works (one unit):** boot, Wi-Fi, Ethernet, Bluetooth (adapter on, pairing untested),
-USB ADB, HDMI video out and HDMI audio. **What does not:** HDMI-in capture, and sensors,
-NFC and GPS are untested. The Pod has no RTC backup cell, so the clock comes from NTP.
-
-It is **higher risk than anything else in this guide** and has had less testing. The
-kernel and boot-image binaries are in the
-[`pod-kernel-28` release](../../releases); the LineageOS image is **linked, not hosted**.
-
-**→ [`experimental/`](experimental/README.md)** has the kernel patch, the on-device
-changes, and [`BUILD.md`](experimental/BUILD.md) to build the kernel and boot image
-yourself. Always `fastboot boot` a new image before you ever flash it.
+> [!WARNING]
+> **EXPERIMENTAL. Tested on one unit; can brick the Pod.**
+>
+> Everything above keeps the stock Android 7.1.1. This is a separate path
+> that replaces it with **LineageOS 18.1 (Android 11)** running on a patched 3.18 kernel, so
+> you get a current Android with Google TV apps instead of the retired vendor system. It
+> needs the unlocked bootloader from the section above.
+>
+> **What works (one unit):** boot, Wi-Fi, Ethernet, Bluetooth (adapter on, pairing untested),
+> USB ADB, HDMI video out and HDMI audio. **What does not:** HDMI-in capture, and sensors,
+> NFC and GPS are untested. The Pod has no RTC backup cell, so the clock comes from NTP.
+>
+> It is **higher risk than anything else in this guide** and has had less testing. The
+> kernel and boot-image binaries are in the
+> [`pod-kernel-28` release](../../releases); the LineageOS image is **linked, not hosted**.
+>
+> **→ [`experimental/`](experimental/README.md)** has the kernel patch, the on-device
+> changes, and [`BUILD.md`](experimental/BUILD.md) to build the kernel and boot image
+> yourself. Always `fastboot boot` a new image before you ever flash it.
 
 ---
 
