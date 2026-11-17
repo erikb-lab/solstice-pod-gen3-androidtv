@@ -91,7 +91,7 @@ Not legal advice. Proceed only if you understand and accept this.
 - [Recovery / un-bricking](#recovery--un-bricking)
 - [Reverting everything](#reverting-everything)
 - [Unlock the bootloader + persistent TWRP](#unlock-the-bootloader--persistent-twrp)
-- [Experimental: LineageOS 18.1 + custom kernel](#experimental-lineageos-181--custom-kernel)
+- [LineageOS 18.1 + custom kernel](#lineageos-181--custom-kernel)
 - [Publishing this (if you fork/mirror it)](#publishing-this-if-you-forkmirror-it)
 
 ---
@@ -472,9 +472,9 @@ Android. If that trade is worth it to you, read the whole thing first:
 
 ---
 
-## Experimental: LineageOS 18.1 + custom kernel
+## LineageOS 18.1 + custom kernel
 
-Everything above keeps the stock Android 7.1.1. This is a separate, **experimental** path
+Everything above keeps the stock Android 7.1.1. This is a separate path
 that replaces it with **LineageOS 18.1 (Android 11)** running on a patched 3.18 kernel, so
 you get a current Android with Google TV apps instead of the retired vendor system. It
 needs the unlocked bootloader from the section above.
