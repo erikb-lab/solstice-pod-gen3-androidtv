@@ -4,6 +4,7 @@
 > single unit, and may brick it. The main guide and the signed TWRP in `recovery/` are
 > separate and are not experimental. Flash only with a stock backup in hand.
 
+- [`BUILD.md`](BUILD.md): build the kernel and boot image yourself
 - [`kernel.md`](kernel.md): kernel patch, DTS, defconfig, boot image build
 - [`lineageos-18.1.md`](lineageos-18.1.md): the LineageOS image (linked, not hosted)
 - [`android-changes.md`](android-changes.md): vendor-side edits

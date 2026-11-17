@@ -91,6 +91,7 @@ Not legal advice. Proceed only if you understand and accept this.
 - [Recovery / un-bricking](#recovery--un-bricking)
 - [Reverting everything](#reverting-everything)
 - [Unlock the bootloader + persistent TWRP](#unlock-the-bootloader--persistent-twrp)
+- [Experimental: LineageOS 18.1 + custom kernel](#experimental-lineageos-181--custom-kernel)
 - [Publishing this (if you fork/mirror it)](#publishing-this-if-you-forkmirror-it)
 
 ---
@@ -153,6 +154,8 @@ SHA256SUMS         checksums for the binaries, so you can verify them
 app/               source + prebuilt APK for the optional HDMI-input app
 recovery/
   twrp-solstice-gen3-signed.img   recovery for this board (RAM-boot only; see NOTICE.md)
+docs/              unlock + persistent TWRP, newer-Android notes, media
+experimental/      LineageOS 18.1 + custom kernel: patch, scripts, BUILD.md (binaries in the release)
 ```
 
 Verify the binaries before use: `sha256sum -c SHA256SUMS`.
@@ -466,6 +469,27 @@ It is **destructive** (unlocking wipes `/data`, so you rebuild the setup) and
 Android. If that trade is worth it to you, read the whole thing first:
 
 **→ [`docs/unlock-and-twrp.md`](docs/unlock-and-twrp.md)**
+
+---
+
+## Experimental: LineageOS 18.1 + custom kernel
+
+Everything above keeps the stock Android 7.1.1. This is a separate, **experimental** path
+that replaces it with **LineageOS 18.1 (Android 11)** running on a patched 3.18 kernel, so
+you get a current Android with Google TV apps instead of the retired vendor system. It
+needs the unlocked bootloader from the section above.
+
+**What works (one unit):** boot, Wi-Fi, Ethernet, Bluetooth (adapter on, pairing untested),
+USB ADB, HDMI video out and HDMI audio. **What does not:** HDMI-in capture, and sensors,
+NFC and GPS are untested. The Pod has no RTC backup cell, so the clock comes from NTP.
+
+It is **higher risk than anything else in this guide** and has had less testing. The
+kernel and boot-image binaries are in the
+[`pod-kernel-28` release](../../releases); the LineageOS image is **linked, not hosted**.
+
+**→ [`experimental/`](experimental/README.md)** has the kernel patch, the on-device
+changes, and [`BUILD.md`](experimental/BUILD.md) to build the kernel and boot image
+yourself. Always `fastboot boot` a new image before you ever flash it.
 
 ---
 

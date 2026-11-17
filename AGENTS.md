@@ -32,6 +32,22 @@ exposing ADB on the network, writing the boot partition).
   "Install TWRP app", do not use Wipe/Format/Restore. Allowing modifications mounts
   `/system` rw and bricks the Pod.
 
+## Experimental path (LineageOS 18.1 + custom kernel): opt-in only
+Everything in `experimental/` and `docs/unlock-and-twrp.md` goes **beyond** the rules
+above. Do **not** start it unless the user explicitly asks for it. When they do:
+- Re-confirm they understand it is destructive (unlocking wipes `/data`) and tested on one
+  unit, and that their bootloader is unlocked (`docs/unlock-and-twrp.md`).
+- Back up `boot` and verify the backup before any flash. Keep it.
+- **`fastboot boot` every new image first.** Only `fastboot flash` an image that has
+  RAM-booted cleanly, was signed per `experimental/BUILD.md`, and whose hash you checked.
+- The "never `fastboot flash`" and "never mount `/system` read-write" rules above are for
+  the stock path. On this path, flash only the partitions the docs name, one at a time,
+  and stop if anything differs from what the docs say.
+- Never push, publish or paste the user's boot/recovery backups, serials, IPs, Wi-Fi
+  details or keys. The LineageOS image is downloaded from the link in
+  `experimental/lineageos-18.1.md` and its sha256 checked; it is never taken from elsewhere.
+- Build instructions: `experimental/BUILD.md`.
+
 ## What to tell the user to do physically (you cannot do these)
 - Connect the Pod to a display (HDMI-out 1), power (12 V center-positive barrel,
   or PoE+), and a USB cable to the computer you're running `adb` on.

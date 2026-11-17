@@ -31,6 +31,13 @@ The signed RAM-boot TWRP image and the HDMI-in APK are attached to the
 the repo (so your build will have a different signature than the prebuilt one).
 See the comments at the top of the script.
 
+## Experimental LineageOS + kernel
+
+Unit reports for the [`experimental/`](experimental/README.md) path are the most valuable
+thing right now: which kernel image you booted (RAM boot or flashed), what worked
+(Wi-Fi, Ethernet, Bluetooth, HDMI audio) and what did not. Build steps are in
+[`experimental/BUILD.md`](experimental/BUILD.md). Never post boot backups, serials or IPs.
+
 ## Pull requests
 
 PRs are welcome for clarity fixes, additional-unit notes, and corrections. Please

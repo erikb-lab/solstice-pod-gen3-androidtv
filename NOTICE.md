@@ -58,6 +58,24 @@ redistributing should strip them or host the image separately.
   `build.sh` generates its own throwaway key outside the repo, so a self-built APK
   will have a different signature than the prebuilt one.
 
+## `experimental/` (LineageOS 18.1 + custom kernel)
+- **Kernel patch** (`experimental/kernel/`): changes to the Linux kernel, so **GPLv2**, applied
+  on the LineageOS `android_kernel_oneplus_msm8996` tree (`lineage-18.1`, commit `b2a6b3b5`).
+  That upstream repo is the corresponding source for the unmodified part; the patch plus the
+  stated base commit is the corresponding source for the rest. The Pod DTS is GPLv2/BSD.
+- **Release binaries** (`pod-kernel-28`): boot images and unpacked parts built from that
+  source. The ramdisk is a minimal first-stage init. The 125 stock DTBs are device-tree
+  binaries from the Pod's factory kernel (GPL kernel build products), included for reference.
+  Build user, host and source paths were replaced with neutral strings.
+- **LineageOS 18.1** is **not included**; it is linked with its checksum in
+  `experimental/lineageos-18.1.md` (Apache-2.0 / various upstream licences).
+- **Not included, deliberately:** Mersive/Qualcomm/OnePlus proprietary files (ACDB calibration,
+  camera libraries, firmware), factory boot/recovery backups, and anything from a user's device.
+  The mixer XML and Bluetooth manifest in `experimental/android/` are LineageOS/AOSP files
+  with Pod-specific edits.
+- Same written offer as above applies to this kernel: open an issue to request source.
+- Tested on a single unit, no warranty.
+
 ## App packages referenced in the guide
 These are **not bundled** - install them from their official upstreams so you get
 current, authentic, correctly-licensed builds:
