@@ -1,0 +1,370 @@
+/* Mersive Solstice Pod Gen3 (APQ8096v3 SBC vP1) on top of the LineageOS
+ * OnePlus 3 3.18 tree. Starts from the stock apq8096-v3-sbc board and applies
+ * the Pod-specific differences found by diffing against the Pod's own DTB:
+ *   - primary display = DSI0 -> ADV7533 bridge (single_dsi), not split DSI / HDMI
+ *   - eMMC on (sdhc_1), UFS off
+ *   - backlight pinctrl on DSI ctrl0
+ * Experimental, RAM-boot test only.
+ */
+
+/dts-v1/;
+
+#include "apq8096-v3.dtsi"
+#include "msm-pmi8996.dtsi"
+#include "apq8096-sbc.dtsi"
+
+/ {
+	model = "APQ8096v3 SBC vP1";
+	compatible = "qcom,apq8096-sbc", "qcom,msm8996",
+			"qcom,apq8096", "qcom,sbc";
+	qcom,board-id = <24 0>;
+
+	reserved-memory {
+		/* same window the stock cmdline hands to ramoops (0x91700000, 1MB) */
+		ramoops_region@91700000 {
+			compatible = "removed-dma-pool";
+			no-map;
+			reg = <0 0x91700000 0 0x100000>;
+		};
+	};
+
+	firmware {
+		android {
+			fstab {
+				/delete-node/ vendor;
+				system {
+					compatible = "android,system";
+					dev = "/dev/block/platform/soc/7464900.sdhci/by-name/system";
+					type = "ext4";
+					mnt_flags = "ro,barrier=1,discard";
+					fsmgr_flags = "wait";
+					status = "ok";
+				};
+			};
+		};
+	};
+};
+
+/* ---- display: DSI0 -> ADV7533 -> HDMI (primary) ---- */
+
+&mdss_mdp {
+	qcom,mdss-pref-prim-intf = "dsi";
+};
+
+&mdss_dsi {
+	hw-config = "single_dsi";
+};
+
+&dsi_adv7533_1080p {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+};
+
+&mdss_dsi0 {
+	qcom,dsi-pref-prim-pan = <&dsi_adv7533_1080p>;
+	pinctrl-names = "mdss_default", "mdss_sleep";
+	pinctrl-0 = <&mdss_dsi_active &mdss_te_active &mdss_disp_bkl_active>;
+	pinctrl-1 = <&mdss_dsi_suspend &mdss_te_suspend &mdss_disp_bkl_suspend>;
+	qcom,platform-bklight-en-gpio = <&tlmm 135 0>;
+	qcom,display-id = "primary";
+	qcom,bridge-index = <0>;
+};
+
+&mdss_dsi1 {
+	status = "disabled";
+};
+
+&mdss_disp_bkl_active {
+	config {
+		pins = "gpio9";
+	};
+};
+
+&mdss_disp_bkl_suspend {
+	config {
+		pins = "gpio9";
+	};
+};
+
+&i2c_8 {
+	/* phone touch controller inherited from the MTP dtsi; not on the Pod */
+	/delete-node/ synaptics@20;
+
+	/* DSI-to-HDMI bridge, values copied from the Pod's stock DTB */
+	adv7533@39 {
+		compatible = "adv7533";
+		reg = <0x39>;
+		instance_id = <0>;
+		rot-vdd-supply = <&gdsc_mdss>;
+		qcom,supply-names = "rot-vdd";
+		adi,video-mode = <3>;
+		adi,main-addr = <0x39>;
+		adi,cec-dsi-addr = <0x3c>;
+		adi,enable-audio;
+		adi,irq-gpio = <&tlmm 95 0x2002>;
+		qcom,min-voltage-level = <0>;
+		qcom,max-voltage-level = <0>;
+		qcom,enable-load = <0>;
+		qcom,disable-load = <0>;
+		qcom,post-on-sleep = <10>;
+		pinctrl-names = "pmx_adv7533_active", "pmx_adv7533_suspend";
+		pinctrl-0 = <&adv7533_0_int_active>;
+		pinctrl-1 = <&adv7533_0_int_suspend>;
+	};
+};
+
+/* ---- storage: eMMC on, UFS off (block copied from msm8996-auto-cdp.dtsi) ---- */
+
+/* Pod stock DTB: ufsice and ufsphy stay "ok", only the ufshc controller is off,
+ * and sdcc1ice (eMMC inline crypto) is "ok". Mirror that exactly. */
+&ufs1 {
+	status = "disabled";
+};
+
+&sdcc1_ice {
+	status = "ok";
+};
+
+/* HDMI-in capture bridge (TC358840) interrupt pin, copied from the Pod DTB.
+ * Camera nodes that reference it are NOT grafted yet (not needed to test display). */
+&tlmm {
+	tc358840_interrupt {
+		tc358840_intr_default: tc358840_intr_default {
+			mux {
+				pins = "gpio21";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio21";
+				drive-strength = <2>;
+				bias-disable;
+				input-enable;
+			};
+		};
+	};
+};
+
+&sdhc_1 {
+	vdd-supply = <&pm8994_l20>;
+	qcom,vdd-voltage-level = <2950000 2950000>;
+	qcom,vdd-current-level = <200 570000>;
+
+	vdd-io-supply = <&pm8994_s4>;
+	qcom,vdd-io-always-on;
+	qcom,vdd-io-voltage-level = <1800000 1800000>;
+	qcom,vdd-io-current-level = <110 325000>;
+
+	pinctrl-names = "active", "sleep";
+	pinctrl-0 = <&sdc1_clk_on &sdc1_cmd_on &sdc1_data_on &sdc1_rclk_on>;
+	pinctrl-1 = <&sdc1_clk_off &sdc1_cmd_off &sdc1_data_off &sdc1_rclk_off>;
+
+	qcom,clk-rates = <400000 20000000 25000000 50000000
+				96000000 192000000 384000000>;
+	qcom,ice-clk-rates = <300000000 150000000>;
+	qcom,nonremovable;
+	qcom,bus-speed-mode = "HS400_1p8v", "HS200_1p8v", "DDR_1p8v";
+
+	status = "ok";
+};
+
+/* ---- ADV7533 interrupt pin: the Pod uses gpio95 (same as adi,irq-gpio above); LOS muxes gpio106 ---- */
+
+&adv7533_0_int_active {
+	mux {
+		pins = "gpio95";
+	};
+	config {
+		pins = "gpio95";
+	};
+};
+
+&adv7533_0_int_suspend {
+	mux {
+		pins = "gpio95";
+	};
+	config {
+		pins = "gpio95";
+	};
+};
+
+/* ---- PCIe1 reset line: Pod gpio39, LOS gpio130 ---- */
+
+&pcie1_perst_default {
+	mux {
+		pins = "gpio39";
+	};
+	config {
+		pins = "gpio39";
+	};
+};
+
+&pcie1 {
+	perst-gpio = <&tlmm 39 0>;
+};
+
+/* ---- Power rails the Pod's own DTB marks always-on / sets differently. The bootloader leaves these
+ * on; without regulator-always-on the kernel's late regulator cleanup switches off the ones nothing
+ * claims (~1.5 s into boot), which made the ADV7533 bridge stop answering on i2c (NACK at 0x39). ---- */
+
+&pm8994_l4 {
+	regulator-always-on;
+};
+
+&pm8994_l14 {
+	regulator-always-on;
+	regulator-min-microvolt = <1850000>;
+	regulator-max-microvolt = <1850000>;
+	qcom,init-voltage = <1850000>;
+};
+
+&pm8994_l16 {
+	regulator-always-on;
+};
+
+&pm8994_l18 {
+	regulator-min-microvolt = <2500000>;
+	regulator-max-microvolt = <2500000>;
+	qcom,init-voltage = <2500000>;
+};
+
+&pm8994_l19 {
+	regulator-always-on;
+};
+
+&pm8994_l22 {
+	regulator-always-on;
+};
+
+&pm8994_l23 {
+	regulator-min-microvolt = <2000000>;
+	regulator-max-microvolt = <2000000>;
+	qcom,init-voltage = <2000000>;
+};
+
+&pm8994_l32 {
+	regulator-always-on;
+};
+
+&pm8994_s4 {
+	regulator-always-on;
+};
+
+/* ---- Audio: the Pod's sound card wires the secondary and quaternary MI2S (mi2s.1, mi2s.3), not the
+ * tertiary one (mi2s.2) the OP3/SBC base uses. Copied from the Pod DTB. ---- */
+
+&dai_mi2s_sec {
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&sec_mi2s_active &sec_mi2s_sd0_active>;
+	pinctrl-1 = <&sec_mi2s_sleep &sec_mi2s_sd0_sleep>;
+};
+
+&dai_mi2s_quat {
+	qcom,msm-mi2s-rx-lines = <2>;
+	qcom,msm-mi2s-tx-lines = <1>;
+	qcom,msm-mi2s-slave = <1>;
+	qcom,msm-mi2s-ext-mclk = <12288000>;
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&quat_mi2s_active &quat_mi2s_sd0_active>;
+	pinctrl-1 = <&quat_mi2s_sleep &quat_mi2s_sd0_sleep>;
+};
+
+&soc {
+	sound-9335 {
+		asoc-cpu = <&dai_pri_auxpcm>, <&dai_sec_auxpcm>, <&dai_hdmi>,
+				<&dai_mi2s_sec>, <&dai_mi2s_quat>,
+				<&sb_0_rx>, <&sb_0_tx>, <&sb_1_rx>, <&sb_1_tx>,
+				<&sb_2_rx>, <&sb_2_tx>, <&sb_3_rx>, <&sb_3_tx>,
+				<&sb_4_rx>, <&sb_4_tx>, <&sb_5_tx>, <&afe_pcm_rx>,
+				<&afe_pcm_tx>, <&afe_proxy_rx>, <&afe_proxy_tx>,
+				<&incall_record_rx>, <&incall_record_tx>,
+				<&incall_music_rx>, <&incall_music2_rx>,
+				<&sb_5_rx>, <&sb_6_rx>;
+		asoc-cpu-names = "msm-dai-q6-auxpcm.1", "msm-dai-q6-auxpcm.2",
+				"msm-dai-q6-hdmi.8", "msm-dai-q6-mi2s.1",
+				"msm-dai-q6-mi2s.3",
+				"msm-dai-q6-dev.16384", "msm-dai-q6-dev.16385",
+				"msm-dai-q6-dev.16386", "msm-dai-q6-dev.16387",
+				"msm-dai-q6-dev.16388", "msm-dai-q6-dev.16389",
+				"msm-dai-q6-dev.16390", "msm-dai-q6-dev.16391",
+				"msm-dai-q6-dev.16392", "msm-dai-q6-dev.16393",
+				"msm-dai-q6-dev.16395", "msm-dai-q6-dev.224",
+				"msm-dai-q6-dev.225", "msm-dai-q6-dev.241",
+				"msm-dai-q6-dev.240", "msm-dai-q6-dev.32771",
+				"msm-dai-q6-dev.32772", "msm-dai-q6-dev.32773",
+				"msm-dai-q6-dev.32770", "msm-dai-q6-dev.16394",
+				"msm-dai-q6-dev.16396";
+	};
+};
+
+/* ---- USB gadget: the micro-USB port is the hsusb controller (dwc3@7600000). Stock userspace drives the
+ * gadget through /sys/class/android_usb/android0, and the gadget device is named after its usb-core-id, so the
+ * micro-USB controller must be core 0 (LOS has it as core 1 and the host-only SS port as core 0). ---- */
+
+&usb2s {
+	dwc3@7600000 {
+		qcom,usb-core-id = <0>;
+	};
+};
+
+&usb3 {
+	dwc3@6a00000 {
+		qcom,usb-core-id = <1>;
+	};
+};
+
+/* ---- HDMI-in: two "camera" slots for the TC358840 HDMI-to-CSI bridge, values copied from the Pod DTB.
+ * The Pod has no real camera modules, so drop the SBC actuator/eeprom/third-camera nodes. ---- */
+
+&cam_csi0_sensor_active {
+	cam_rear_active_cfg {
+		pins = "gpio30", "gpio29";
+	};
+};
+
+&cam_csi0_sensor_suspend {
+	cam_rear_suspend_cfg {
+		pins = "gpio30", "gpio29";
+	};
+};
+
+&cci {
+	/delete-node/ qcom,actuator@0;
+	/delete-node/ qcom,actuator@1;
+	/delete-node/ qcom,eeprom@0;
+	/delete-node/ qcom,eeprom@1;
+	/delete-node/ qcom,camera@2;
+
+	qcom,camera@0 {
+		/delete-property/ qcom,actuator-src;
+		/delete-property/ qcom,eeprom-src;
+		qcom,csiphy-sd-index = <0>;
+		qcom,csid-sd-index = <0>;
+		qcom,cam-vreg-min-voltage = <1050000 0 2850000>;
+		qcom,cam-vreg-max-voltage = <1050000 0 2850000>;
+		pinctrl-names = "cam_default", "cam_suspend", "tc358840_intr";
+		pinctrl-0 = <&cam_sensor_mclk0_active &cam_csi0_sensor_active>;
+		pinctrl-1 = <&cam_sensor_mclk0_suspend &cam_csi0_sensor_suspend
+				&tc358840_intr_default>;
+		gpios = <&tlmm 13 0>, <&tlmm 30 0>, <&tlmm 29 0>;
+		qcom,tc-hpd-gpio_ctrl = <&tlmm 22 0>;
+		interrupt-parent = <&tlmm>;
+		qcom,gpio-connect = <&tlmm 21 0>;
+	};
+
+	qcom,camera@1 {
+		qcom,csiphy-sd-index = <2>;
+		qcom,csid-sd-index = <2>;
+		qcom,cam-vreg-min-voltage = <1050000 0 2850000>;
+		qcom,cam-vreg-max-voltage = <1050000 0 2850000>;
+		pinctrl-names = "cam_default", "cam_suspend", "tc358840_intr";
+		pinctrl-0 = <&cam_sensor_mclk0_active &cam_csi0_sensor_active>;
+		pinctrl-1 = <&cam_sensor_mclk0_suspend &cam_csi0_sensor_suspend
+				&tc358840_intr_default>;
+		gpios = <&tlmm 13 0>, <&tlmm 30 0>, <&tlmm 29 0>;
+		qcom,gpio-req-tbl-label = "CAMIF_MCLK0", "CAM_RESET0", "CAM_STANDBY0";
+		qcom,tc-hpd-gpio_ctrl = <&tlmm 22 0>;
+		interrupt-parent = <&tlmm>;
+		qcom,gpio-connect = <&tlmm 21 0>;
+		clocks = <&clock_mmss clk_mclk0_clk_src>,
+			 <&clock_mmss clk_camss_mclk0_clk>;
+	};
+};

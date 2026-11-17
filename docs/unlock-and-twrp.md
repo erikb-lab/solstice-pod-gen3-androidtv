@@ -1,10 +1,10 @@
-# Experimental: unlock the bootloader and flash TWRP to recovery
+# Unlock the bootloader and flash TWRP to recovery
 
-> **Status: EXPERIMENTAL.** This goes beyond the main guide. The main guide
-> deliberately never unlocks the bootloader and never flashes a partition, so it
-> stays low-risk. This page does both. It is here because it worked on one Gen3
-> unit (SP8096 / MSM8996), start to finish, but it is **higher risk, destructive,
-> and less tested**. Read the whole page before you touch anything.
+> **Status: working.** The signed TWRP in `recovery/` (sha256 `814cbcc5…`, see
+> `SHA256SUMS`) has been flashed to the recovery partition of a Gen3 unit and has run
+> reliably since. This goes beyond the main guide, which never unlocks the bootloader
+> or flashes a partition. This page does both, so it is still **destructive** (it
+> wipes `/data`) and tested on one unit. Read the whole page before you touch anything.
 
 ## What this gets you, and what it does not
 
