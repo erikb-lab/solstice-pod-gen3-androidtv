@@ -30,6 +30,14 @@ that phone builds like LineageOS for the OnePlus 3 do not have. This folder's ja
   `virtual-search` and `virtual-remote` into one input device and the "device added" event the
   service waits for never fires.
 
+> [!NOTE]
+> **Untested on hardware:** the caller check in `KeyInjector` / `TvRemoteProvider` was tightened
+> after a security audit. It now matches the caller's exact open socket, and the provider waits
+> for an `OK` reply. That change has only been tested off-device. The rest of the remote is
+> tested on a Pod. If pairing works but keys stop arriving after installing this jar, install the
+> previous, hardware-tested jar instead: it stays in the `remote-volumebar-1` release as
+> `com.android.media.tv.remoteprovider-4791fde.jar` (rename it to `com.android.media.tv.remoteprovider.jar`).
+
 ## Install
 
 ```

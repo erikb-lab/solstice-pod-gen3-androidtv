@@ -10,4 +10,5 @@ Later additions: SystemUI disabled for user 0 (it caused problems; the volume pa
 by [`volumebar/`](volumebar/README.md)); phone remote via a stand-in
 `com.android.media.tv.remoteprovider` jar and `tv-remote.rc` ([`remote/`](remote/README.md));
 LiveDisplay's `.rc` moved out of `/system/vendor/etc/init` (it crash-looped every 5 s, and init
-parses `.rc.bak` files too).
+parses `.rc.bak` files too); `/system/framework/podtv-hdmid.jar` + `/system/etc/init/podtv-hdmid.rc`
+for the second HDMI output ([`hdmi-out/`](hdmi-out/README.md)).

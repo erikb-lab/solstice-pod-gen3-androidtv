@@ -10,8 +10,10 @@
 - [`android-changes.md`](android-changes.md): vendor-side edits
 - [`remote/`](remote/README.md): phone remote (Google TV app / Nope Remote) via Android TV Remote v2
 - [`volumebar/`](volumebar/README.md): on-screen volume bar, since SystemUI is disabled
+- [`hdmi-out/`](hdmi-out/README.md): turns on the native HDMI 2.0 output (GPIO 127) and adds a
+  resolution / refresh-rate picker, including an "all modes" fallback for screens with no EDID
 - Binaries (packed/unpacked boot images, DTBs): draft release `pod-kernel-28`
-- Remote jar + Volume Bar APK: release `remote-volumebar-1` (EXPERIMENTAL); Google's remote service APK and MindTheGapps are linked, not hosted
+- Remote jar, Volume Bar APK, HDMI Out helper jar + APK: pre-release `remote-volumebar-1` (EXPERIMENTAL); Google's remote service APK and MindTheGapps are linked, not hosted
 
 **Privacy:** the build host, user name and source paths that kernel builds normally embed were
 replaced with neutral same-length strings (`pod@host`, `/usr/src/linux-3.18.124-pod-lineage-18.`).

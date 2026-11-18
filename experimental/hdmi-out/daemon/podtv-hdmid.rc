@@ -1,0 +1,14 @@
+# Pod native HDMI out (HDMI 2.0 port, fb1): port enable + mode helper for the HDMI Out app.
+
+# TLMM GPIO 127 = "MER6641 HDMI OUT1 enable" (stock Solstice init.qcom.post_boot.sh).
+# Without it the port has no HPD / DDC. The daemon sets it again in case this is denied.
+on boot
+    write /sys/class/gpio/export 127
+    write /sys/class/gpio/gpio127/direction out
+    write /sys/class/gpio/gpio127/value 1
+
+service podtv_hdmid /system/bin/app_process -Djava.class.path=/system/framework/podtv-hdmid.jar /system/bin com.podtv.hdmid.HdmiModeDaemon
+    class late_start
+    user root
+    group root system graphics
+    seclabel u:r:su:s0

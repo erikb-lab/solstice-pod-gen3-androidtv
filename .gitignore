@@ -7,3 +7,8 @@ app/res/
 *.keystore
 boot-backup.img
 *.img.bak
+
+# hdmi-out build outputs (binaries go in the release, not git)
+experimental/hdmi-out/daemon/podtv-hdmid.jar
+experimental/hdmi-out/app/hdmiout.apk
+experimental/hdmi-out/app/build/

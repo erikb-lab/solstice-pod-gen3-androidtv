@@ -38,6 +38,10 @@ public abstract class TvRemoteProvider {
             OutputStream o = s.getOutputStream();
             o.write(cmd.getBytes("UTF-8"));
             o.flush();
+            // wait for "OK": KeyInjector checks our uid against our open socket, so we must
+            // not close it before the check (closed sockets show up as uid 0 and are refused)
+            s.setSoTimeout(2000);
+            s.getInputStream().read();
         } catch (Exception e) {
             Log.e(TAG, "sendCmd failed", e);
         } finally {

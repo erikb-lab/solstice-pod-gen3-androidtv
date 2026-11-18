@@ -81,27 +81,56 @@ public class KeyInjector {
         }
     }
 
-    /** uid owning the local TCP socket bound to {@code port}, or -1 if not found. */
-    private static int socketUid(int port) {
-        String hex = String.format(":%04X ", port);
-        for (String f : new String[] {"/proc/net/tcp6", "/proc/net/tcp"}) {
-            try (BufferedReader r = new BufferedReader(new FileReader(f))) {
+    /**
+     * uid owning the client end of a connection to 127.0.0.1:{@code serverPort}, or -1.
+     * Matches the exact socket: local 127.0.0.1:{@code clientPort} (or ::ffff:127.0.0.1 in tcp6),
+     * remote 127.0.0.1:{@code serverPort}, state ESTABLISHED, live inode, exactly one match.
+     * Closed/orphaned sockets (TIME_WAIT, FIN_WAIT) report uid 0, so they must never match;
+     * the client keeps its socket open until it reads our "OK" reply.
+     */
+    private static int peerUid(int clientPort, int serverPort) {
+        String lp = String.format("%04X", clientPort), sp = String.format("%04X", serverPort);
+        String[][] files = {{"/proc/net/tcp", "0100007F"}, {"/proc/net/tcp6", "0000000000000000FFFF00000100007F"}};
+        int uid = -1, matches = 0;
+        for (String[] f : files) {
+            try (BufferedReader r = new BufferedReader(new FileReader(f[0]))) {
                 String l;
                 while ((l = r.readLine()) != null) {
                     String[] c = l.trim().split("\\s+");
-                    if (c.length > 7 && (c[1] + " ").endsWith(hex) && c[2].endsWith(":1944")) {
-                        return Integer.parseInt(c[7]);
-                    }
+                    if (c.length < 10) continue;
+                    if (!c[1].equalsIgnoreCase(f[1] + ":" + lp)) continue;
+                    if (!c[2].equalsIgnoreCase(f[1] + ":" + sp)) continue;
+                    if (!c[3].equals("01") || c[9].equals("0")) continue;
+                    matches++;
+                    uid = Integer.parseInt(c[7]);
                 }
             } catch (Exception ignored) {
             }
         }
-        return -1;
+        return matches == 1 ? uid : -1;
     }
 
     private static boolean allowed(Socket s) {
-        int uid = socketUid(s.getPort());
+        if (!s.getInetAddress().isLoopbackAddress()) return false;
+        int uid = peerUid(s.getPort(), 6468);
         return uid == 0 || (uid >= 0 && uid == remoteUid());
+    }
+
+    /** One request line: at most 128 chars within 2 s total, so a slow client cannot stall the loop. */
+    private static String readRequest(Socket s) throws java.io.IOException {
+        java.io.InputStream in = s.getInputStream();
+        long end = System.currentTimeMillis() + 2000;
+        StringBuilder sb = new StringBuilder();
+        while (true) {
+            long left = end - System.currentTimeMillis();
+            if (left <= 0) return null;
+            s.setSoTimeout((int) left);
+            int b = in.read();
+            if (b < 0 || b == '\n') break;
+            if (sb.length() >= 128) return null;
+            sb.append((char) b);
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) throws Exception {
@@ -118,7 +147,12 @@ public class KeyInjector {
                         System.out.println("KeyInjector: rejected connection from port " + s.getPort());
                         continue;
                     }
-                    line = new BufferedReader(new InputStreamReader(s.getInputStream(), "UTF-8")).readLine();
+                    line = readRequest(s);
+                    if (line != null) {
+                        OutputStream o = s.getOutputStream();
+                        o.write("OK\n".getBytes("UTF-8"));
+                        o.flush();
+                    }
                 }
                 if (line == null) continue;
                 String[] p = line.trim().split("\\s+");

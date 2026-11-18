@@ -483,8 +483,9 @@ Android. If that trade is worth it to you, read the whole thing first:
 > needs the unlocked bootloader from the section above.
 >
 > **What works (one unit):** boot, Wi-Fi, Ethernet, Bluetooth (adapter on, pairing untested),
-> USB ADB, HDMI video out and HDMI audio. **What does not:** HDMI-in capture, and sensors,
-> NFC and GPS are untested. The Pod has no RTC backup cell, so the clock comes from NTP.
+> USB ADB, HDMI audio, the ADV7533 HDMI output at 1080p60, and the native HDMI 2.0 output with the
+> [HDMI out add-on](experimental/hdmi-out/README.md) (tested at 1080p; 4K untested). **What does not:** HDMI-in capture, and sensors, NFC and GPS are untested.
+> The Pod has no RTC backup cell, so the clock comes from NTP.
 >
 > It is **higher risk than anything else in this guide** and has had less testing. The
 > kernel and boot-image binaries are in the
@@ -494,9 +495,30 @@ Android. If that trade is worth it to you, read the whole thing first:
 > changes, and [`BUILD.md`](experimental/BUILD.md) to build the kernel and boot image
 > yourself. Always `fastboot boot` a new image before you ever flash it.
 >
-> Also experimental on that build: a [phone remote](experimental/remote/README.md) (Google TV
-> app / Nope Remote) and an on-screen [volume bar](experimental/volumebar/README.md); binaries
-> in the [`remote-volumebar-1` release](../../releases).
+> **Add-ons for that build** (each EXPERIMENTAL, binaries in the
+> [`remote-volumebar-1` pre-release](../../releases)):
+>
+> - **[Phone remote](experimental/remote/README.md)**: the Google TV app or Nope Remote pairs and
+>   controls the Pod (keys, D-pad, volume, text).
+>   - Fixes the handshake that used to stall after "connected" (remote service 6.x waits for a
+>     `virtual-remote` input device).
+>   - Starts by itself on every boot.
+>   - Its key helper only accepts the remote service and root, checked against the caller's
+>     exact socket.
+> - **[Volume bar](experimental/volumebar/README.md)**: SystemUI is disabled on this build, so this
+>   draws the on-screen volume level whenever the volume changes, from the phone remote, a
+>   keyboard or HDMI-CEC.
+> - **[HDMI out](experimental/hdmi-out/README.md)**: brings up the second, native HDMI 2.0 output.
+>   On LineageOS it was black because its enable line, GPIO 127, was never set.
+>   - Adds an **HDMI Out** app that lists every resolution and refresh rate the screen reports:
+>     up to 3840×2160 @ 24/25/30 Hz, 4K50/60 if the screen advertises HDMI 2.0, 1080p
+>     @ 24–60 Hz, and PC modes up to 2560×1600 @ 60 Hz.
+>   - New modes come with a 15-second "Keep?" safety revert.
+>   - The choice is remembered across replugs and reboots.
+>   - Adapters that send no EDID (which would otherwise get only 640×480) switch to a built-in
+>     list of every mode automatically. An **All modes** switch forces that list on any screen.
+>   - Max refresh is 60 Hz: the kernel's mode table has no 120/144 Hz entries.
+>   - The ADV7533 port stays at 1080p60.
 
 ---
 

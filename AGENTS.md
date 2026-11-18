@@ -51,6 +51,9 @@ above. Do **not** start it unless the user explicitly asks for it. When they do:
   jar + `tv-remote.rc`; needs MindTheGapps ATV and Google's remote service 6.9.906821247, checked
   by sha256, never rehosted). Volume overlay: `experimental/volumebar/README.md`. SystemUI is
   deliberately disabled on the user's Pod; do not re-enable it to get a volume panel.
+- Second HDMI output: `experimental/hdmi-out/README.md`. The native HDMI 2.0 port needs TLMM GPIO
+  127 high (`podtv_hdmid` does it at boot). Never kill `app_process` by name: the remote's
+  KeyInjector and `podtv_hdmid` both run as `app_process`; use the exact PID.
 - Init parses every file in `/system/etc/init`, including `*.bak`; to disable an `.rc`, move it out
   of the folder. adb loses root on each reboot on this build: run `adb root` before `/system` work.
 
