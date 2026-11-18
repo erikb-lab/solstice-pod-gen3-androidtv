@@ -47,6 +47,12 @@ above. Do **not** start it unless the user explicitly asks for it. When they do:
   details or keys. The LineageOS image is downloaded from the link in
   `experimental/lineageos-18.1.md` and its sha256 checked; it is never taken from elsewhere.
 - Build instructions: `experimental/BUILD.md`.
+- Phone remote: `experimental/remote/README.md` (stand-in `com.android.media.tv.remoteprovider`
+  jar + `tv-remote.rc`; needs MindTheGapps ATV and Google's remote service 6.9.906821247, checked
+  by sha256, never rehosted). Volume overlay: `experimental/volumebar/README.md`. SystemUI is
+  deliberately disabled on the user's Pod; do not re-enable it to get a volume panel.
+- Init parses every file in `/system/etc/init`, including `*.bak`; to disable an `.rc`, move it out
+  of the folder. adb loses root on each reboot on this build: run `adb root` before `/system` work.
 
 ## What to tell the user to do physically (you cannot do these)
 - Connect the Pod to a display (HDMI-out 1), power (12 V center-positive barrel,

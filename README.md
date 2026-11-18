@@ -493,6 +493,10 @@ Android. If that trade is worth it to you, read the whole thing first:
 > **→ [`experimental/`](experimental/README.md)** has the kernel patch, the on-device
 > changes, and [`BUILD.md`](experimental/BUILD.md) to build the kernel and boot image
 > yourself. Always `fastboot boot` a new image before you ever flash it.
+>
+> Also experimental on that build: a [phone remote](experimental/remote/README.md) (Google TV
+> app / Nope Remote) and an on-screen [volume bar](experimental/volumebar/README.md); binaries
+> in the [`remote-volumebar-1` release](../../releases).
 
 ---
 

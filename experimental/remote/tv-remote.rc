@@ -1,0 +1,15 @@
+# Init snippet for the Pod phone remote (Android TV Remote v2 on LineageOS 18.1).
+# Install as /system/etc/init/tv-remote.rc (mode 644, label system_file).
+#
+# tv_key_injector: root helper from com.android.media.tv.remoteprovider.jar. It injects
+# key events and creates the "virtual-remote" uhid device the remote service waits for.
+service tv_key_injector /system/bin/app_process -Djava.class.path=/system/framework/com.android.media.tv.remoteprovider.jar /system/bin com.android.media.tv.remoteprovider.KeyInjector
+    class late_start
+    user root
+    group root system input uhid
+    seclabel u:r:su:s0
+
+# Start the remote service (and the optional volume bar) once boot completes.
+# The remote service's own BOOT_COMPLETED receiver does not start it on this build.
+on property:sys.boot_completed=1
+    exec_background u:r:su:s0 root root -- /system/bin/sh -c "sleep 15; /system/bin/am startservice -n com.google.android.tv.remote.service/.RemoteService; /system/bin/am start-foreground-service -n com.podtv.volumebar/.VolumeService"

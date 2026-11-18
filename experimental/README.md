@@ -8,7 +8,10 @@
 - [`kernel.md`](kernel.md): kernel patch, DTS, defconfig, boot image build
 - [`lineageos-18.1.md`](lineageos-18.1.md): the LineageOS image (linked, not hosted)
 - [`android-changes.md`](android-changes.md): vendor-side edits
+- [`remote/`](remote/README.md): phone remote (Google TV app / Nope Remote) via Android TV Remote v2
+- [`volumebar/`](volumebar/README.md): on-screen volume bar, since SystemUI is disabled
 - Binaries (packed/unpacked boot images, DTBs): draft release `pod-kernel-28`
+- Remote jar + Volume Bar APK: release `remote-volumebar-1` (EXPERIMENTAL); Google's remote service APK and MindTheGapps are linked, not hosted
 
 **Privacy:** the build host, user name and source paths that kernel builds normally embed were
 replaced with neutral same-length strings (`pod@host`, `/usr/src/linux-3.18.124-pod-lineage-18.`).
