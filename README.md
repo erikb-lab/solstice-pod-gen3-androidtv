@@ -269,6 +269,16 @@ dm-verity stays intact. **Don't** try to delete it from `/system`.
   disable it from stock with the command above instead).
 - **Revert:** `adb shell cmd package install-existing com.mersive.solstice.server`
   then `adb shell pm enable com.mersive.solstice.server`.
+- **Still dropping after the disable?** One user (not yet reproduced here) found the
+  drop comes from the framework, not the Solstice app. Logcat showed
+  `UsbDeviceManager: setAdbEnabled: false` about 10 s after boot. `UsbDeviceManager`
+  is a system service in the firmware, so `pm disable-user` cannot stop it.
+  Workarounds reported by that user:
+  - Enable ADB by hand in Developer options each boot, during the window.
+  - Install an APK during the window with a background retry loop, then set the
+    launcher as home (for example `adb shell cmd package set-home-activity`).
+  - Check the build fingerprint (`getprop ro.build.fingerprint`). Firmware versions
+    may behave differently.
 
 Confirm it's a normal, ADB-reachable Android device:
 ```bash
